@@ -21,6 +21,8 @@ let prices = document.querySelectorAll('#quote_val'); #searches for id
 prices.forEach((price) => {currentValue: price.innerText}) #saves inner text to JSON response
 ```
 
+Run ```node index.js``` to grab the most current price from WSJ and print to the console.
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
