@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer');
+
+//based off project on https://www.toptal.com/puppeteer/headless-browser-puppeteer-tutorial
 function run (pagesToScrape) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -7,35 +9,30 @@ function run (pagesToScrape) {
             }
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
-            await page.goto("https://news.ycombinator.com/");
+            await page.goto("https://quotes.wsj.com/ATRC");
             let currentPage = 1;
-            let urls = [];
+            let dataScrapes = [];
             while (currentPage <= pagesToScrape) {
-                let newUrls = await page.evaluate(() => {
+                let newDataScrape = await page.evaluate(() => {
                     let results = [];
-                    let items = document.querySelectorAll('a.storylink');
-                    items.forEach((item) => {
+                    let prices = document.querySelectorAll('#quote_val');
+                    prices.forEach((price) => {
                         results.push({
-                            url:  item.getAttribute('href'),
-                            text: item.innerText,
+                            companyName: "AtriCure, Inc.",
+                            currentValue: price.innerText,
                         });
                     });
                     return results;
                 });
-                urls = urls.concat(newUrls);
-                if (currentPage < pagesToScrape) {
-                    await Promise.all([
-                        await page.click('a.morelink'),
-                        await page.waitForSelector('a.storylink')
-                    ])
-                }
+                dataScrapes = dataScrapes.concat(newDataScrape);
                 currentPage++;
             }
             browser.close();
-            return resolve(urls);
+            return resolve(dataScrapes);
         } catch (e) {
             return reject(e);
         }
     })
 }
-run(5).then(console.log).catch(console.error);
+//run program once, log it to console to do as you wish!
+run(1).then(console.log).catch(console.error);
